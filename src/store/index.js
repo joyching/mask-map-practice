@@ -10,6 +10,7 @@ export default createStore({
     location: [],
     // 存放 API 回傳的所有藥局資訊
     stores: [],
+    keywords: '',
   },
   getters: {
     cityList(state) {
@@ -24,7 +25,10 @@ export default createStore({
       // 依縣市、行政區分組
       const { stores } = state;
 
-      return stores.filter((d) => d.county === state.currCity && d.town === state.currDistrict);
+      // 加入關鍵字判斷功能
+      return state.keywords
+        ? stores.filter((d) => d.name.includes(state.keywords))
+        : stores.filter((d) => d.county === state.currCity && d.town === state.currDistrict);
     },
   },
   mutations: {
@@ -40,6 +44,9 @@ export default createStore({
     setStores(state, payload) {
       state.stores = payload;
     },
+    setKeywords(state, payload) {
+      state.keywords = payload;
+    }
   },
   actions: {
     // 取得行政區資料
