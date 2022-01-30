@@ -14,12 +14,19 @@
       </label>
     </div>
 
+    <div class="wraps">
+      <label>
+        <i class="fas fa-search-location"></i> 關鍵字搜尋：
+        <input type="text" placeholder="請輸入關鍵字" v-model="keywords">
+      </label>
+    </div>
+
     <ul class="store-lists">
       <li class="store-info wraps"
         v-for="store in filteredStores"
         :key="`store_${store.id}`"
       >
-        <h1>{{ store.name }}</h1>
+        <h1 v-html="keywordHighlight(store.name)"></h1>
 
         <div class="mask-info">
           <i class="fas fa-head-side-mask"></i>
@@ -45,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'asideMenu',
@@ -66,6 +73,14 @@ export default {
         this.$store.commit('setcurrDistrict', value);
       },
     },
+    keywords: {
+      get() {
+        return this.$store.state.keywords;
+      },
+      set(value) {
+        this.$store.commit('setKeywords', value);
+      },
+    },
     ...mapGetters(['cityList', 'districtList', 'filteredStores'])
   },
   watch: {
@@ -74,5 +89,16 @@ export default {
       this.currDistrict = arr.name;
     },
   },
+  methods: {
+    keywordHighlight(val) {
+      return val.replace(new RegExp(this.keywords, 'g'), `<span class="highlight">${this.keywords}</span>`);
+    },
+  }
 }
 </script>
+
+<style>
+.highlight {
+  color: #f08d49;
+}
+</style>
