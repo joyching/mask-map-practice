@@ -3,21 +3,49 @@
     <div class="wraps">
       <label>
         縣市：<select v-model="currCity">
-          <option v-for="city in cityList" :key="city">{{ city }}</option>
+          <option v-for="city in cityList" :key="`city_${city}`">{{ city }}</option>
         </select>
       </label>
 
       <label>
         行政區：<select v-model="currDistrict">
-          <option v-for="district in districtList" :key="district.id">{{ district.name }}</option>
+          <option v-for="district in districtList" :key="`district_${district.id}`">{{ district.name }}</option>
         </select>
       </label>
     </div>
+
+    <ul class="store-lists">
+      <li class="store-info wraps"
+        v-for="store in filteredStores"
+        :key="`store_${store.id}`"
+      >
+        <h1>{{ store.name }}</h1>
+
+        <div class="mask-info">
+          <i class="fas fa-head-side-mask"></i>
+          <span>大人口罩: {{ store.mask_adult }} 個</span>
+        </div>
+
+        <div class="mask-info">
+          <i class="fas fa-baby"></i>
+          <span>兒童口罩: {{ store.mask_child }} 個</span>
+        </div>
+
+        <div class="mask-info">
+          最後更新時間: {{ store.updated }}
+        </div>
+
+        <button class="btn-store-detail">
+          <i class="fas fa-info-circle"></i>
+          看詳細資訊
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'asideMenu',
@@ -38,7 +66,7 @@ export default {
         this.$store.commit('setcurrDistrict', value);
       },
     },
-    ...mapGetters(['cityList', 'districtList'])
+    ...mapGetters(['cityList', 'districtList', 'filteredStores'])
   },
   watch: {
     districtList(v) {

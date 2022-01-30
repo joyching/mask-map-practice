@@ -20,6 +20,12 @@ export default createStore({
       // 行政區, 利用 Optional Chaining 處理預設值問題
       return state.location.find((d) => d.name === state.currCity)?.districts || [];
     },
+    filteredStores(state) {
+      // 依縣市、行政區分組
+      const { stores } = state;
+
+      return stores.filter((d) => d.county === state.currCity && d.town === state.currDistrict);
+    },
   },
   mutations: {
     setcurrCity(state, payload) {
