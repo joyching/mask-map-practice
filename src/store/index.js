@@ -2,10 +2,63 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    // 使用者目前所選縣市, 預設值為 臺北市
+    currCity: '臺北市',
+    // 使用者目前所選行政區, 預設值為 北投區
+    currDistrict: '北投區',
+    // 存放 API 回傳的 縣市/行政區的列表資訊
+    location: [],
+    // 存放 API 回傳的所有藥局資訊
+    stores: [],
+  },
+  getters: {
+    cityList(state) {
+      // 城市
+      return state.location.map((d) => d.name);
+    },
+    districtList(state) {
+      // 行政區, 利用 Optional Chaining 處理預設值問題
+      return state.location.find((d) => d.name === state.currCity)?.districts || [];
+    },
   },
   mutations: {
+    setcurrCity(state, payload) {
+      state.currCity = payload;
+    },
+    setcurrDistrict(state, payload) {
+      state.currDistrict = payload;
+    },
+    setAreaLocation(state, payload) {
+      state.location = payload;
+    },
+    setStores(state, payload) {
+      state.stores = payload;
+    },
   },
   actions: {
+    // 取得行政區資料
+    async fetchLocations({ commit }) {
+      const json = await fetch('https://raw.githubusercontent.com/kurotanshi/mask-map/master/raw/area-location.json')
+        .then((res) => res.json());
+
+      // 透過 commit 來操作 mutations
+      commit('setAreaLocation', json);
+    },
+    // 取得藥局資料
+    async fetchPharmacies({ commit }) {
+      const json = await fetch('https://kiang.github.io/pharmacies/json/points.json')
+        .then((res) => res.json());
+
+      // 整理資料格式，拆出經緯度
+      const data = json.features.map((d) => ({
+        ...d.properties,
+        latitude: d.geometry.coordinates[0],
+        longitude: d.geometry.coordinates[1],
+      }));
+
+      // 透過 commit 來操作 mutations
+      commit('setStores', data);
+    },
   },
   modules: {
   }
