@@ -42,7 +42,7 @@
           最後更新時間: {{ store.updated }}
         </div>
 
-        <button class="btn-store-detail">
+        <button class="btn-store-detail" @click="openInfoBox(store.id)">
           <i class="fas fa-info-circle"></i>
           看詳細資訊
         </button>
@@ -81,6 +81,22 @@ export default {
         this.$store.commit('setKeywords', value);
       },
     },
+    showModal: {
+      get() {
+        return this.$store.state.showModal;
+      },
+      set(value) {
+        this.$store.commit('setShowModal', value);
+      },
+    },
+    infoBoxStoreId: {
+      get() {
+        return this.$store.state.infoBoxStoreId;
+      },
+      set(value) {
+        this.$store.commit('setInfoBoxStoreId', value);
+      },
+    },
     ...mapGetters(['cityList', 'districtList', 'filteredStores'])
   },
   watch: {
@@ -93,6 +109,10 @@ export default {
     keywordHighlight(val) {
       return val.replace(new RegExp(this.keywords, 'g'), `<span class="highlight">${this.keywords}</span>`);
     },
+    openInfoBox(storeId) {
+      this.infoBoxStoreId = storeId;
+      this.showModal = true;
+    }
   }
 }
 </script>

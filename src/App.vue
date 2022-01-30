@@ -3,15 +3,21 @@
     <asideMenu />
 
     <div class="mask-map" id="mask-map"></div>
+
+    <lightbox />
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
 import asideMenu from './components/asideMenu.vue';
+import lightbox from './components/lightbox.vue';
 
 export default {
-  components: { asideMenu },
+  components: {
+    asideMenu,
+    lightbox
+  },
   name: 'App',
   methods: {
     ...mapActions(['fetchLocations', 'fetchPharmacies'])
