@@ -11,6 +11,8 @@ export default createStore({
     // 存放 API 回傳的所有藥局資訊
     stores: [],
     keywords: '',
+    showModal: false,
+    infoBoxStoreId: null,
   },
   getters: {
     cityList(state) {
@@ -46,6 +48,12 @@ export default createStore({
     },
     setKeywords(state, payload) {
       state.keywords = payload;
+    },
+    setShowModal(state, payload) {
+      state.showModal = payload;
+    },
+    setInfoBoxStoreId(state, payload) {
+      state.infoBoxStoreId = payload;
     }
   },
   actions: {
