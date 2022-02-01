@@ -32,6 +32,10 @@ export default createStore({
         ? stores.filter((d) => d.name.includes(state.keywords))
         : stores.filter((d) => d.county === state.currCity && d.town === state.currDistrict);
     },
+    currentDistrictInfo(state, getters) {
+      // 目前所選行政區資訊
+      return getters.districtList.find((d) => d.name === state.currDistrict) || {};
+    },
   },
   mutations: {
     setcurrCity(state, payload) {

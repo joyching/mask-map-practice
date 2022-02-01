@@ -4,6 +4,11 @@
       <div class="modal-wrapper" @click.self="close">
         <div class="modal-container">
           <div class="modal-body" v-if="currentStore">
+            <!-- close button -->
+            <button type="button" class="modal-close" @click="close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <!-- store name -->
             <h1 class="store-name">{{ currentStore.name }}</h1>
             <hr>
             <h2 class="title">營業時間</h2>
@@ -118,6 +123,15 @@ export default {
 .modal-body {
   color: #42b983;
   margin: 20px 0;
+}
+.modal-close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
 }
 </style>
 
