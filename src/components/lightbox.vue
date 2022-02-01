@@ -53,43 +53,39 @@
 </template>
 
 <script>
+import { inject, computed, toRefs } from "vue";
 export default {
-  name: 'Lightbox',
-  computed: {
-    showModal: {
-      get() {
-        return this.$store.state.showModal;
-      },
-      set(value) {
-        this.$store.commit('setShowModal', value);
-      },
-    },
-    infoBoxStoreId: {
-      get() {
-        return this.$store.state.infoBoxStoreId;
-      },
-      set(value) {
-        this.$store.commit('setInfoBoxStoreId', value);
-      },
-    },
-    currentStore() {
-      return this.$store.state.stores.filter((s) => s.id === this.infoBoxStoreId)[0];
-    },
-    servicePeriods() {
-      let servicePeriods = this?.currentStore?.['service_periods'] || '';
-      servicePeriods = servicePeriods.replace(/N/g, 'O').replace(/Y/g, 'X');
+  name: "Lightbox",
+  setup() {
+    const mapStore = inject("mapStore");
+    const { state, setShowModal } = mapStore;
 
+    const currentStore = computed(
+      () => state.stores.filter((d) => d.id === state.infoBoxStoreId)[0]
+    );
+
+    const servicePeriods = computed(() => {
+      let servicePeriods = currentStore.value?.["service_periods"] || "";
+      servicePeriods = servicePeriods.replace(/N/g, "O").replace(/Y/g, "X");
       return servicePeriods
-        ? [servicePeriods.slice(0, 7).split(''),
-          servicePeriods.slice(7, 14).split(''),
-          servicePeriods.slice(14, 21).split('')]
+        ? [
+            servicePeriods.slice(0, 7).split(""),
+            servicePeriods.slice(7, 14).split(""),
+            servicePeriods.slice(14, 21).split(""),
+          ]
         : servicePeriods;
-    },
-  },
-  methods: {
-    close() {
-      this.showModal = false;
-    },
+    });
+
+    const close = () => {
+      setShowModal(false);
+    };
+
+    return {
+      ...toRefs(state),
+      currentStore,
+      servicePeriods,
+      close,
+    };
   },
 };
 </script>
