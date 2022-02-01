@@ -25,7 +25,7 @@
       <li class="store-info wraps"
         v-for="store in filteredStores"
         :key="`store_${store.id}`"
-        @click="$emit('triggerMarkerPopup', store.id)"
+        @click="triggerPopup(store.id)"
       >
         <h1 v-html="keywordHighlight(store.name)"></h1>
 
@@ -53,69 +53,70 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { toRefs, inject, watch, computed } from "vue";
 
 export default {
-  name: 'asideMenu',
-  computed: {
-    currCity: {
-      get() {
-        return this.$store.state.currCity;
-      },
-      set(value) {
-        this.$store.commit('setcurrCity', value);
-      },
-    },
-    currDistrict: {
-      get() {
-        return this.$store.state.currDistrict;
-      },
-      set(value) {
-        this.$store.commit('setcurrDistrict', value);
-      },
-    },
-    keywords: {
-      get() {
-        return this.$store.state.keywords;
-      },
-      set(value) {
-        this.$store.commit('setKeywords', value);
-      },
-    },
-    showModal: {
-      get() {
-        return this.$store.state.showModal;
-      },
-      set(value) {
-        this.$store.commit('setShowModal', value);
-      },
-    },
-    infoBoxStoreId: {
-      get() {
-        return this.$store.state.infoBoxStoreId;
-      },
-      set(value) {
-        this.$store.commit('setInfoBoxStoreId', value);
-      },
-    },
-    ...mapGetters(['cityList', 'districtList', 'filteredStores'])
-  },
-  watch: {
-    districtList(v) {
-      const [arr] = v;
-      this.currDistrict = arr.name;
-    },
-  },
-  methods: {
-    keywordHighlight(val) {
-      return val.replace(new RegExp(this.keywords, 'g'), `<span class="highlight">${this.keywords}</span>`);
-    },
-    openInfoBox(storeId) {
-      this.infoBoxStoreId = storeId;
-      this.showModal = true;
+  name: "asideMenu",
+  setup() {
+    const mapStore = inject('mapStore');
+    const map = inject('map');
+    const { triggerPopup } = map;
+    const { state, setCurrCity, setCurrDistrict, setKeywords, setShowModal, setInfoBoxStoreId } = mapStore;
+
+    const keywordHighlight = val => {
+      return val.replace(new RegExp(state.keywords, 'g'), `<span class="highlight">${state.keywords}</span>`)
+    };
+
+    const openInfoBox = storeId => {
+      setInfoBoxStoreId(storeId);
+      setShowModal(true);
     }
-  }
-}
+
+    const currCity = computed({
+      get () {
+        return state.currCity;
+      },
+      set (value) {
+        // 更換行政區回到第一頁
+        setCurrCity(value);
+      }
+    });
+
+    const currDistrict = computed({
+      get () {
+        return state.currDistrict;
+      },
+      set (value) {
+        // 更換行政區回到第一頁
+        setCurrDistrict(value);
+      }
+    });
+
+    const currKeywords = computed({
+      get() {
+        return state.keywords;
+      },
+      set(value) {
+        setKeywords(value);
+      },
+    })
+
+    watch(() => (state.districtList), v => {
+      const [arr] = v;
+      setCurrDistrict(arr.name);
+    });
+
+    return {
+      ...toRefs(state),
+      currCity,
+      currDistrict,
+      currKeywords,
+      triggerPopup,
+      openInfoBox,
+      keywordHighlight
+    };
+  },
+};
 </script>
 
 <style>
